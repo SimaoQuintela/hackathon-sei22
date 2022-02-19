@@ -40,6 +40,21 @@ def convert(timetable,solver):
                 nextt = addtime(time[0], time[1])
     return slots,tasks
 
+def is_Free(day, time, fixed):
+    list_times = map(normalize,fixed[day].keys())
+    highest = time
+
+    for x in list_times:
+        if x < time and x > highest:
+            highest = x
+
+    if highest == time:
+        if time not in fixed[day]:
+            return True
+
+    return fixed[day][highest] == 'Free'
+    
+
 horario = {
             "Monday":{"08:00":"SO","09:00":"Free","16:00":"PA","17:15":"LC","19:45":"Free"},
             "Tuesday":{"08:00":"Free", "13:30":"PA", "14:00": "Free"},
@@ -151,18 +166,23 @@ def addDynamic(fixed, dynamic):
             for task in dynamic:
                 solver.Add(slots[day][slot][task] <= dynamic[task]["days"][day])
 
-    # # A fixed task needs to have all slots together
-    # for task in dynamic:
-    #     if dynamic[task]["is_fixed"]:
-    #         time = normalize(dynamic[task]['time'])
-
-    #         total_s = int(4 * time[0] + time[1] / 15)
-    #         for day in slots:
-    #             for slot in slots[day]:
-    #                 wicked = slot
-    #                 for i in range(1,total_s+1):
-    #                     solver.Add(slots[day][slot][task] == 1)
-    #                     wicked=addtime(wicked[0], wicked[1])
+    # A fixed task needs to have all slots together
+    for task in dynamic:
+        if dynamic[task]['is_fixed']:
+            time = normalize(dynamic[task]['time'])
+            total_s = 4 * time[0] + time[1]/15
+            for day in slots:
+                if dynamic[task]['days'][day]:
+                    list1 = []
+                    for slot in slots[day]:
+                        list2 = []
+                        n = 0
+                        while slot in slots[day] and n < total_s and (is_Free(day, time, fixed)):
+                            list2.append(slots[day][slot][task])
+                            n+=1
+                            slot = addtime(slot[0], slot[1])
+                        list1.append(list2)
+                    solver.Add(sum([(sum(el1) == total_s) for el1 in list1]) == 1)
 
 
 
