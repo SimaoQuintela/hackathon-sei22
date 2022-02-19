@@ -1,7 +1,7 @@
-from z3 import *
+
 from ortools.linear_solver import pywraplp
 def addtime(hour, minutes):
-    return (hour,minutes+15) if minutes != 45 else (hour+1,0)
+    return (hour%24,minutes+15) if minutes != 45 else ((hour+1)%24,0)
 
 def normalize(hour):
     return (int(hour.split(':')[0]), int(hour.split(':')[1]))
@@ -14,7 +14,7 @@ def convert(timetable,solver):
         for hour in timetable[day]:
             if timetable[day][hour] != "Free":
                 tasks.add(timetable[day][hour])
-    print(tasks)
+    #print(tasks)
     slots = {}
     for day in timetable:
 
@@ -50,8 +50,46 @@ def convert(timetable,solver):
 
 
 
-horario = {"Monday":{"08:00":"SO","09:00":"Free","16:00":"PA","17:15":"LC","19:45":"Free"}}
-dinamico = {"Ginasio":{ "hours": "02:00", "morning": True, "afternoon": True, "night": False, "late_night": False,"days": {"monday": True}, "time": "01:00", "is_fixed": False}}
+horario = {
+            "Monday":{"08:00":"SO","09:00":"Free","16:00":"PA","17:15":"LC","19:45":"Free"},
+            "Tuesday":{"08:00":"Free"},
+            "Wednesday":{"09:00":"PI","11:00":"LA1","15:00":"AUC","17:00":"Free"},
+            "Thursday":{"14:00":"Violino","18:00":"Free"},
+            "Friday":{"11:00":"PI","17:00":"LC","19:00":"Free"}
+           }
+dinamico = {"Ginasio":
+                { "hours": "02:00",
+                  "morning": False,
+                  "afternoon": True,
+                  "night": False,
+                  "late_night": False,
+                  "days":
+                      {
+                        "Monday": False,
+                        "Tuesday":True,
+                        "Wednesday":True,
+                        "Thursday":False,
+                        "Friday":True
+                    },
+                  "time": "01:00",
+                  "is_fixed": False},
+            "Passear o cao":
+                { "hours": "02:00",
+                  "morning": False,
+                  "afternoon": False,
+                  "night": True,
+                  "late_night": False,
+                  "days":
+                      {
+                        "Monday": False,
+                        "Tuesday":False,
+                        "Wednesday":True,
+                        "Thursday":False,
+                        "Friday":True
+                    },
+                  "time": "01:00",
+                  "is_fixed": False}
+            }
 
 
 def denormalize(tuple):
@@ -81,53 +119,75 @@ def addDynamic(fixed, dynamic):
     solver = pywraplp.Solver('BOP', pywraplp.Solver.BOP_INTEGER_PROGRAMMING)
     slots,tasks = convert(fixed,solver)
 
+
+
+
     for task in dynamic:
         for day in slots:
             for slot in slots[day]:
                 slots[day][slot][task] = solver.BoolVar("slots[%s][(%i,%i)][%s]" % (day, slot[0], slot[1], task))
 
-
-
-    # nao pode haver sobreposiçao
+    # Guarantee that the slots are properly filled
     for day in slots:
         for slot in slots[day]:
-            print(slots[day][slot][task])
+            task = slots[day][slot]
+            while slot not in slots[day]:
+                solver.Add(slots[day][slot][task] == 1)
+                slot = addtime(slot[0], slot[1])
+    tasks.update(dynamic)
+    # There cant be overlaping slots
+    for day in slots:
+        for slot in slots[day]:
             solver.Add(sum([slots[day][slot][task] for task in tasks]) <= 1)
-
-    # as tarefas cumprem o manha/tarde/noite
+    # The tasks respect their time period
     for day in slots:
 
         for slot in slots[day]:
-            if (8, 0)<= slot < (12, 0):
-                print(slot)
+            if (8, 0) <= slot < (12, 0):
                 for task in dynamic:
-                    print(slots[day][slot][task])
                     solver.Add(slots[day][slot][task] <= int(dynamic[task]['morning']))
 
-            elif (13, 0)<= slot < (20, 0):
+            elif (13, 0) <= slot < (20, 0):
                 for task in dynamic:
                     solver.Add(slots[day][slot][task] <= int(dynamic[task]['afternoon']))
-            elif (21, 0)<= slot < (24, 0):
+            elif (21, 0) <= slot < (24, 0):
                 for task in dynamic:
                     solver.Add(slots[day][slot][task] <= int(dynamic[task]['night']))
-            else:
+            elif (0,0)<= slot < (7,0):
                 for task in dynamic:
                     solver.Add(slots[day][slot][task] <= int(dynamic[task]['late_night']))
+            else:
+                for task in dynamic:
+                    solver.Add(slots[day][slot][task] == 0)
+    # Each task has the number of slots required
+    for task in dynamic:
+        time = normalize(dynamic[task]['hours'])
 
-
-
-
+        total_h = int(4 * time[0] + time[1] / 15)
+        print(total_h)
+        solver.Add(sum([slots[day][slot][task] for day in slots for slot in slots[day]]) == total_h)
+    #A task can only be assigned to the day it is allowed
+    for day in slots:
+        for slot in slots[day]:
+            for task in dynamic:
+                solver.Add(slots[day][slot][task] <= dynamic[task]["days"][day])
 
     r = solver.Solve()
-    print(slots)
+
+
     if r == pywraplp.Solver.OPTIMAL:
-        return revert(slots,tasks,r)
+
+        for x in slots:
+            for y in slots[x]:
+                for z in slots[x][y]:
+                    print(rf"{x}, {y}, {z},{slots[x][y][z].solution_value()}")
+        return revert(slots, tasks, r)
+
+
 print(addDynamic(horario, dinamico))
-'''
-for y in range(N ** 2):
-    for x in range(N ** 2):
-        for c in range(N ** 2):
-            mat[y][x][c] = round(matriz[y][x][c].solution_value())
-'''
+
+
+
+
 
 
