@@ -1,15 +1,17 @@
 from flask import Flask, request, jsonify
 import logic
+import ast
 
 app = Flask(__name__)
 
 @app.route('/', methods=['GET'])
 def welcome():
     try:
-        data = request.get_data()
+        byte_str = request.get_data()
+        dict_str = byte_str.decode("UTF-8")
+        data = ast.literal_eval(dict_str)
 
-        return data
-        return logic.addDynamic(schedule, dynamic_slots)
+        return logic.addDynamic(data["schedule"], data["dynamic_slots"])
     except Exception as e:
         return str(e)
 
