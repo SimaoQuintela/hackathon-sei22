@@ -11,7 +11,6 @@ def convert(timetable,solver):
         for hour in timetable[day]:
             if timetable[day][hour] != "Free":
                 tasks.add(timetable[day][hour])
-    #print(tasks)
     slots = {}
     for day in timetable:
         hours = [normalize(t) for t in timetable[day]]
@@ -31,7 +30,6 @@ def convert(timetable,solver):
 
             nextt = addtime(time[0], time[1])
             while nextt not in hours and nextt[0] != 24:
-                #print(next)
                 time = nextt
                 slots[day][time] = {}
                 for content in tasks:
@@ -40,7 +38,6 @@ def convert(timetable,solver):
                         solver.Add(slots[day][time][cur] == 1)
 
                 nextt = addtime(time[0], time[1])
-    #print(slots)
     return slots,tasks
 
 horario = {
@@ -86,7 +83,6 @@ dinamico = {"Ginasio":
 
 def denormalize(tuple):
     return "%02d:%02d" % (tuple[0], tuple[1])
-#print(denormalize((8,0)))
 
 def revert(solver,tasks,res):
     timetable = {}
@@ -104,7 +100,6 @@ def revert(solver,tasks,res):
                         timetable[day][ft] = task
                         cur = task
     return timetable
-#print(horario == revert(convert(horario)))
 
 def addDynamic(fixed, dynamic):
     solver = pywraplp.Solver('BOP', pywraplp.Solver.BOP_INTEGER_PROGRAMMING)
@@ -115,13 +110,6 @@ def addDynamic(fixed, dynamic):
             for slot in slots[day]:
                 slots[day][slot][task] = solver.BoolVar("slots[%s][(%i,%i)][%s]" % (day, slot[0], slot[1], task))
 
-    # Guarantee that the slots are properly filled
-    # for day in slots:
-    #     for slot in slots[day]:
-    #         task = slots[day][slot]
-    #         while slot not in slots[day]:
-    #             solver.Add(slots[day][slot][task] == 1)
-    #             slot = addtime(slot[0], slot[1])
     tasks.update(dynamic)
 
     # There cant be overlaping slots
@@ -155,7 +143,6 @@ def addDynamic(fixed, dynamic):
         time = normalize(dynamic[task]['hours'])
 
         total_h = int(4 * time[0] + time[1] / 15)
-        #print(total_h)
         solver.Add(sum([slots[day][slot][task] for day in slots for slot in slots[day]]) == total_h)
     
     # A task can only be assigned to the day it is allowed
@@ -164,20 +151,18 @@ def addDynamic(fixed, dynamic):
             for task in dynamic:
                 solver.Add(slots[day][slot][task] <= dynamic[task]["days"][day])
 
-    # A fixed task needs to have all slots together
-    # for day in slots:
-    #     for slot in slots[day]:
-    #         for task in dynamic:
-    #             if dynamic[task]["is_fixed"]:
-    #                 time = normalize(dynamic[task]['time'])
+    # # A fixed task needs to have all slots together
+    # for task in dynamic:
+    #     if dynamic[task]["is_fixed"]:
+    #         time = normalize(dynamic[task]['time'])
 
-    #                 total_t = int(4 * time[0] + time[1] / 15)
-    #                 boolVar_list = []
-    #                 while slot not in slots[day]:
-    #                     print(slot)
-    #                     boolVar_list.append(slots[day][slot][task])
-    #                     slot = addtime(slot[0], slot[1])
-    #                 solver.Add(len(boolVar_list) == total_t)
+    #         total_s = int(4 * time[0] + time[1] / 15)
+    #         for day in slots:
+    #             for slot in slots[day]:
+    #                 wicked = slot
+    #                 for i in range(1,total_s+1):
+    #                     solver.Add(slots[day][slot][task] == 1)
+    #                     wicked=addtime(wicked[0], wicked[1])
 
 
 
@@ -192,4 +177,5 @@ def addDynamic(fixed, dynamic):
         #             print(rf"{x}, {y}, {z},{slots[x][y][z].solution_value()}")
         return revert(slots, tasks, r)
 
-print(addDynamic(horario, dinamico))
+if __name__ == '__main__':
+    print(addDynamic(horario, dinamico))
