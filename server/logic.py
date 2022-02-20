@@ -167,22 +167,24 @@ def addDynamic(fixed, dynamic):
                 solver.Add(slots[day][slot][task] <= dynamic[task]["days"][day])
 
     # A fixed task needs to have all slots together
-    for task in dynamic:
-        if dynamic[task]['is_fixed']:
-            time = normalize(dynamic[task]['time'])
-            total_s = 4 * time[0] + time[1]/15
-            for day in slots:
-                if dynamic[task]['days'][day]:
-                    list1 = []
-                    for slot in slots[day]:
-                        list2 = []
-                        n = 0
-                        while slot in slots[day] and n < total_s and (is_Free(day, time, fixed)):
-                            list2.append(slots[day][slot][task])
-                            n+=1
-                            slot = addtime(slot[0], slot[1])
-                        list1.append(list2)
-                    solver.Add(sum([(sum(el1) == total_s) for el1 in list1]) == 1)
+    # for task in dynamic:
+    #     if dynamic[task]['is_fixed']:
+    #         time = normalize(dynamic[task]['time'])
+    #         total_s = 4 * time[0] + time[1]/15
+    #         for day in slots:
+    #             if dynamic[task]['days'][day]:
+    #                 list1 = []
+    #                 for slot in slots[day]:
+    #                     list2 = []
+    #                     n = 0
+    #                     while slot in slots[day] and n < total_s and (is_Free(day, time, fixed)):
+    #                         list2.append(slots[day][slot][task])
+    #                         n+=1
+    #                         slot = addtime(slot[0], slot[1])
+    #                     list1.append(list2)
+    #                     print(list2)
+    #                 solver.Add(sum([(sum(el1)) for el1 in list1]) <= total_s + (len(list1) - 1) * (total_s - 1))
+    #                 solver.Add(sum([(sum(el1)) for el1 in list1]) >= total_s + (len(list1) - 1))
 
 
 
