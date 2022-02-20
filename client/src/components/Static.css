@@ -1,0 +1,43 @@
+.activity-input-bar {
+  background-color: white;
+  text-align: inherit;
+  float: left;
+}
+
+.start-hour {
+  margin: 10px;
+}
+
+.end-hour {
+  margin: 10px;
+}
+
+h3 {
+  margin: 10px 0 10px 0;
+}
+
+form {
+  height: 200px;
+}
+
+.checkbox {
+  margin: 7px 0 0 6px;
+  float: left;
+}
+
+label {
+  margin: 0 0 0 5px;
+  justify-content: inherit;
+  align-items: inherit;
+  float: left;
+}
+
+#add-block {
+  width: 260px;
+  background-color: #98afe9;
+}
+
+#add-block:hover {
+  background-color: rgba(14, 14, 226, 0.541);
+  color: white;
+}

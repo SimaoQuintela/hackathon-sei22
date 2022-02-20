@@ -1,0 +1,27 @@
+.activity-input-bar {
+  background-color: white;
+  text-align: inherit;
+  float: left;
+}
+
+.dayTime {
+  display: flex;
+  justify-content: start;
+}
+
+.daytime-container {
+  display: flex;
+}
+
+.daytime-text {
+  display: flex;
+  justify-content: start;
+}
+
+.particionable {
+  height: 70px;
+}
+
+#end-hour {
+  margin-bottom: 10px;
+}

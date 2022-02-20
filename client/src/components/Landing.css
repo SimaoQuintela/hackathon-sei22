@@ -1,0 +1,67 @@
+@import url("https://fonts.googleapis.com/css2?family=Martel:wght@200&display=swap");
+
+* {
+  text-align: center;
+}
+#title1 {
+  position: absolute;
+  margin-top: 100px;
+  margin-left: 150px;
+  font-family: "Mortel", serif;
+  font-size: 60px;
+  font-weight: bold;
+  text-align: left;
+  background-color: white;
+}
+
+#title2 {
+  position: absolute;
+  margin-top: 170px;
+  margin-left: 150px;
+  font-family: "Mortel", serif;
+  font-size: 75px;
+  font-weight: bold;
+  text-align: left;
+  background-color: white;
+  z-index: 2;
+}
+
+#title3 {
+  position: absolute;
+  margin-top: 265px;
+  margin-left: 260px;
+  font-family: "Mortel", serif;
+  font-size: 60px;
+  font-weight: bold;
+  text-align: left;
+  background-color: white;
+  z-index: 1;
+}
+
+#description {
+  position: absolute;
+  margin-top: 400px;
+  margin-left: 4.3%;
+  text-align: left;
+  color: #2c4faa;
+  font-size: 25px;
+  font-weight: 600;
+  left: 15%;
+  background-color: white;
+}
+
+.main-container {
+  border-radius: 20px;
+  width: 80%;
+  height: 600px;
+  margin: 100px 0 0 200px;
+  background-color: white;
+  border-radius: 20px;
+  box-shadow: 10px 5px 5px rgb(77, 77, 77);
+}
+
+#arrow {
+  width: 30px;
+  height: 50px;
+  margin: 0;
+}

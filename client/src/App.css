@@ -1,0 +1,15 @@
+svg {
+    margin: 100px auto 100px auto;
+}
+
+* {
+    background-color: rgb(226 232 240);
+}
+
+h1 {
+    font-size: 35px;
+    font-weight: 600;
+    width: 180px;
+    text-align: left;
+    margin-top: 40px;
+}
