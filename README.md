@@ -25,7 +25,7 @@ Equipa formada por:
         </a>
     </td>
     <td align="center">
-        <a href="https://github.com/https://github.com/SimaoQuintela">
+        <a href="https://github.com/SimaoQuintela">
             <img src="https://avatars.githubusercontent.com/u/71183501?v=4" width="100;" alt="Simão Quintela"/>
             <br />
             <sub><b>Simao Quintela</b></sub>
