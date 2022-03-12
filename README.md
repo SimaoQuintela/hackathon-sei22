@@ -32,7 +32,7 @@ Equipa formada por:
         </a>
     </td>
     <td align="center">
-        <a href="https://github.com/MrNameless">
+        <a href="https://github.com/MrNameless10">
             <img src="https://avatars.githubusercontent.com/u/61701003?v=4" width="100;" alt="Miguel Freitas"/>
             <br />
             <sub><b>Miguel Freitas</b></sub>
