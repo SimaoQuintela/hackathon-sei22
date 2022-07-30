@@ -38,5 +38,12 @@ Equipa formada por:
             <sub><b>Miguel Freitas</b></sub>
         </a>
     </td>
+    <td align="center">
+        <a href="https://github.com/StrillX">
+            <img src="https://avatars.githubusercontent.com/u/61950932?v=4?v=4" width="100;" alt="Bruno Machado"/>
+            <br />
+            <sub><b>Bruno Machado</b></sub>
+        </a>
+    </td>
   </tr>
 </table>
